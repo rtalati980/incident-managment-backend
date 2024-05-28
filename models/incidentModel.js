@@ -1,0 +1,42 @@
+const db = require('../config/db');
+
+const Incident = {
+    create: (incident, callback) => {
+        const query = 'INSERT INTO incidents SET ?';
+        db.query(query, incident, (err, result) => {
+            if (err) return callback(err);
+            callback(null, result.insertId);
+        });
+    },
+    findAll: (callback) => {
+        const query = 'SELECT * FROM incidents';
+        db.query(query, callback);
+    },
+    findById: (id, callback) => {
+        const query = 'SELECT * FROM incidents WHERE id = ?';
+        db.query(query, [id], callback);
+    },
+    update: (id, incident, callback) => {
+        const query = 'UPDATE incidents SET ? WHERE id = ?';
+        db.query(query, [incident, id], callback);
+    },
+    delete: (id, callback) => {
+        const query = 'DELETE FROM incidents WHERE id = ?';
+        db.query(query, [id], callback);
+    }
+    ,
+    findByUser: (userId, callback) => {
+        const query = 'SELECT * FROM incidents WHERE userId = ?';
+        db.query(query, [userId], (err, results) => {
+            if (err) return callback(err);
+            console.log("error" ,err);
+            callback(null, results);
+        });
+    },
+    findByNo:(No ,callback) => {
+        const query ='SELECT * FROM incidents WHERE No = ? ';
+        db.query(query, [No], callback);
+    },
+};
+
+module.exports = Incident;
