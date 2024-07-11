@@ -2,21 +2,21 @@ const Wrklctn = require('../models/wrklctnModel');
 
 const wrklctnController = {
     create: (req, res) => {
-        const { name, bayOwner, bayType, bayOwnerEmail } = req.body;
-        
-        Wrklctn.create(name, bayOwner, bayType, bayOwnerEmail, (err, results) => {
+        const { name, bayType, UserID } = req.body;
+        console.log(req.body);
+        Wrklctn.create(name, bayType, UserID, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            res.status(201).json({ id: results.insertId, name });
+            res.status(201).json({ id: results.insertId, name, bayType, UserID });
         });
     },
 
     update: (req, res) => {
         const { id } = req.params;
-        const { name, bayOwner, bayType, bayOwnerEmail } = req.body;
+        const { name, bayType, UserID } = req.body;
         
-        Wrklctn.update(id, name, bayOwner, bayType, bayOwnerEmail, (err, results) => {
+        Wrklctn.update(id, name, bayType, UserID, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
@@ -48,6 +48,20 @@ const wrklctnController = {
         const { id } = req.params;
         
         Wrklctn.getById(id, (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Work location not found' });
+            }
+            res.status(200).json(results[0]);
+        });
+    },
+
+    getByName:(req,res)=> {
+        const { name} = req.params;
+        
+        Wrklctn.getByName(name, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }

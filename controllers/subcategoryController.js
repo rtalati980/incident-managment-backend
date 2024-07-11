@@ -2,20 +2,22 @@ const Subcategory = require('../models/subcategoryModel');
 
 const subcategoryController = {
     create: (req, res) => {
-        const { name, categoryId } = req.body;
+        const { name, category_id } = req.body;
         console.log(req.body);
-        Subcategory.create({ name, categoryId: categoryid }, (err, results) => {
+
+        Subcategory.create({ name, category_id }, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            res.status(201).json({ id: results.insertId, name, categoryId });
+            res.status(201).json({ id: results.insertId, name, category_id });
         });
     },
 
     update: (req, res) => {
         const { id } = req.params;
-        const { name, categoryId } = req.body;
-        Subcategory.update(id, { name, categoryId }, (err, results) => {
+        const { name, category_id } = req.body;
+
+        Subcategory.update(id, { name, category_id }, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
@@ -25,6 +27,7 @@ const subcategoryController = {
 
     delete: (req, res) => {
         const { id } = req.params;
+
         Subcategory.delete(id, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
@@ -35,19 +38,17 @@ const subcategoryController = {
 
     getAll: (req, res) => {
         Subcategory.getAll((err, results) => {
-            
             if (err) {
-
+                console.log(err);  // Log the error for debugging purposes
                 return res.status(500).json({ error: err.message });
-                console.log(err);
             }
             res.status(200).json(results);
-
         });
     },
 
     getById: (req, res) => {
         const { id } = req.params;
+
         Subcategory.getById(id, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });

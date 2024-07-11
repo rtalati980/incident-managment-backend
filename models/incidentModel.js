@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { promisify } = require('util');
 
 const Incident = {
     create: (incident, callback) => {
@@ -23,20 +24,28 @@ const Incident = {
     delete: (id, callback) => {
         const query = 'DELETE FROM incidents WHERE id = ?';
         db.query(query, [id], callback);
-    }
-    ,
+    },
     findByUser: (userId, callback) => {
         const query = 'SELECT * FROM incidents WHERE userId = ?';
-        db.query(query, [userId], (err, results) => {
-            if (err) return callback(err);
-            console.log("error" ,err);
-            callback(null, results);
-        });
+        db.query(query, [userId], callback);
     },
-    findByNo:(No ,callback) => {
-        const query ='SELECT * FROM incidents WHERE No = ? ';
+    findByNo: (No, callback) => {
+        const query = 'SELECT * FROM incidents WHERE No = ?';
         db.query(query, [No], callback);
+    },
+    findByUserId: (userId, callback) => {
+        const query = 'SELECT * FROM incidents WHERE JSON_CONTAINS(assignedUsers, ?)';
+        db.query(query, [userId], callback);
     },
 };
 
-module.exports = Incident;
+module.exports = {
+    create: promisify(Incident.create),
+    findAll: promisify(Incident.findAll),
+    findById: promisify(Incident.findById),
+    update: promisify(Incident.update),
+    delete: promisify(Incident.delete),
+    findByUser: promisify(Incident.findByUser),
+    findByNo: promisify(Incident.findByNo),
+    findByUserId: promisify(Incident.findByUserId),
+};
