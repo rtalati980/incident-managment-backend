@@ -2,13 +2,13 @@ const db = require('../config/db');
 
 const Subcategory = {
     create: (subcategory, callback) => {
-        const query = 'INSERT INTO subcategory (name, categoryId) VALUES (?, ?)';
-        db.query(query, [subcategory.name, subcategory.categoryId], callback);
+        const query = 'INSERT INTO subcategory (name, category_id) VALUES (?, ?)';
+        db.query(query, [subcategory.name, subcategory.category_id], callback);
     },
 
     update: (id, subcategory, callback) => {
-        const query = 'UPDATE subcategory SET name = ?, categoryId = ? WHERE id = ?';
-        db.query(query, [subcategory.name, subcategory.categoryId, id], callback);
+        const query = 'UPDATE subcategory SET name = ?, category_id = ? WHERE id = ?';
+        db.query(query, [subcategory.name, subcategory.category_id, id], callback);
     },
 
     delete: (id, callback) => {
@@ -18,21 +18,31 @@ const Subcategory = {
 
     getAll: (callback) => {
         const query = `
-            SELECT subcategory.id, subcategory.name, subcategory.categoryId, category.name as category_name 
+            SELECT subcategory.id, subcategory.name, subcategory.category_id, category.name AS category_name
             FROM subcategory
-            JOIN category ON subcategory.categoryId = category.id
+            JOIN category ON subcategory.category_id = category.id
         `;
         db.query(query, callback);
     },
 
     getById: (id, callback) => {
         const query = `
-            SELECT subcategory.id, subcategory.name, subcategory.categoryId, category.name as category_name 
+            SELECT subcategory.id, subcategory.name, subcategory.category_id, category.name AS category_name
             FROM subcategory
-            JOIN category ON subcategory.categoryIid = category.id
+            JOIN category ON subcategory.category_id = category.id
             WHERE subcategory.id = ?
         `;
         db.query(query, [id], callback);
+    },
+
+    getByCategoryId: (categoryId, callback) => {
+        const query = `
+            SELECT subcategory.id, subcategory.name, subcategory.category_id, category.name AS category_name
+            FROM subcategory
+            JOIN category ON subcategory.category_id = category.id
+            WHERE subcategory.category_id = ?
+        `;
+        db.query(query, [categoryId], callback);
     }
 };
 

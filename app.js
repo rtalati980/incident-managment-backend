@@ -38,6 +38,7 @@ app.use('/api', subcategoryRouter);
 app.use('/api', statusRouter);
 app.use('/api', repeatedRouter);
 app.use('/api' ,behaviourRouter);
+app.use('/api', require('./routes/incidentHistoryRoutes'));
 // Connect to the database
 db.connect((err) => {
     if (err) {

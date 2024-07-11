@@ -8,5 +8,6 @@ router.put('/wrklctns/:id', wrklctnController.update);
 router.delete('/wrklctns/:id', wrklctnController.delete);
 router.get('/wrklctns', wrklctnController.getAll);
 router.get('/wrklctns/:id', wrklctnController.getById);
+router.get('/wrklctn/name/:name',wrklctnController.getByName);
 
 module.exports = router;
