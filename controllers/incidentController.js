@@ -1,71 +1,133 @@
+const multer = require('multer');
+const path = require('path');
 const Incident = require('../models/incidentModel');
-const jwt = require('jsonwebtoken');
 const IncidentHistory = require('../models/incidentHistory');
+const jwt = require('jsonwebtoken');
 
-// Generate a unique number for the incident
-function generateUniqueNo() {
-    const timestamp = Date.now();
-    return `INC-${timestamp}`;
-}
+// Configure multer storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        console.log('Setting file destination to uploads/');
+        cb(null, 'uploads/'); // Directory where files will be saved
+    },
+    filename: (req, file, cb) => {
+        const uniqueFilename = Date.now() + '-' + file.originalname;
+        console.log(`Generated unique filename: ${uniqueFilename}`);
+        cb(null, uniqueFilename); // Create a unique file name
+    }
+});
 
-exports.createIncident = async (req, res) => {
-    const uniqueNo = generateUniqueNo();
-    const todayDate = new Date().toISOString().split('T')[0];
+// Initialize multer with storage configuration
+const upload = multer({ storage });
 
-    const newIncident = {
-        No: uniqueNo,
-        workLocation: req.body.workLocation,
-        observerDescription: req.body.observerDescription,
-        type: req.body.type,
-        category: req.body.category,
-        subcategory: req.body.subcategory,
-        status: 'Open',
-        actionTaken: req.body.actionTaken,
-        userId: req.userId,
-        inciDate: req.body.inciDate,
-        inciTime: req.body.inciTime,
-        repoDate: todayDate,
-    };
+// Handle file upload and incident creation
+exports.createIncident = [
+    upload.array('files', 10), // Handle up to 10 files
+    async (req, res) => {
+        console.log('Request received for incident creation');
+        console.log('Request body:', req.body);
 
-     console.log(newIncident);
-     
-    // Check if assignedUsers exists and process it
-    if (req.body.assignedUsers) {
-        try {
-            newIncident.assignedUsers = JSON.stringify(req.body.assignedUsers.flat().map(Number));
-        } catch (error) {
-            return res.status(400).json({ message: 'Invalid assignedUsers format' });
+        if (req.files) {
+            console.log(`Received ${req.files.length} file(s):`);
+            req.files.forEach((file, index) => {
+                console.log(`File ${index + 1}:`, file);
+            });
         }
-    }
 
-    // Validate required fields
-    if (!newIncident.No || !newIncident.workLocation || !newIncident.userId) {
-        return res.status(400).json({ message: 'Required fields are missing' });
-    }
+        const uniqueNo = generateUniqueNo();
+        console.log('Generated unique incident number:', uniqueNo);
 
-    try {
-        // Create the incident
-        const incidentId = await Incident.create(newIncident);
-
-        // Create the incident history
-        const newIncidentHistory = {
-            IncidentID: incidentId,
-            PreviousStatus: null,
-            NewStatus: 'Open',
-            PreviousAssigneeID: null,
-            NewAssigneeID: null,
-            Comment: 'Incident created',
-            UserID: req.userId,
+        const todayDate = new Date().toISOString().split('T')[0];
+        const newIncident = {
+            No: uniqueNo,
+            workLocation: req.body.workLocation,
+            observerDescription: req.body.observerDescription,
+            type: req.body.type,
+            category: req.body.category,
+            subcategory: req.body.subcategory,
+            status: 'Open',
+            actionTaken: req.body.actionTaken,
+            userId: req.userId,
+            inciDate: req.body.inciDate,
+            inciTime: req.body.inciTime,
+            repoDate: todayDate,
         };
 
-        await IncidentHistory.create(newIncidentHistory);
+        console.log('Prepared incident data:', newIncident);
 
-        res.status(201).json({ message: 'Incident created successfully', No: uniqueNo });
-    } catch (err) {
-        console.error('Error creating incident:', err);
-        res.status(500).json({ message: 'Error creating incident', error: err.message });
+        // Process assignedUsers if provided
+   // Process assignedUsers if provided
+if (req.body.assignedUsers) {
+    try {
+        console.log('Raw assignedUsers:', req.body.assignedUsers);
+        // Split comma-separated values into an array and map them to numbers
+        newIncident.assignedUsers = JSON.stringify(
+            req.body.assignedUsers.split(',').map(Number)
+        );
+        console.log('Processed assignedUsers:', newIncident.assignedUsers);
+    } catch (error) {
+        console.error('Error processing assignedUsers:', error);
+        return res.status(400).json({ message: 'Invalid assignedUsers format' });
     }
-};
+}
+
+
+        // Validate required fields
+        if (!newIncident.No || !newIncident.workLocation || !newIncident.userId) {
+            console.error('Missing required fields:', newIncident);
+            return res.status(400).json({ message: 'Required fields are missing' });
+        }
+
+        try {
+            // Create the incident in the database
+            console.log('Creating incident in database...');
+            const incidentId = await Incident.create(newIncident);
+            console.log('Incident created with ID:', incidentId);
+
+            let filesData = [];
+            if (req.files && req.files.length > 0) {
+                filesData = req.files.map((file, index) => ({
+                    filename: file.filename,
+                    path: file.path,
+                    type: req.body[`file${index}Type`] || 'unknown',
+                }));
+                console.log('Processed file data:', filesData);
+
+                // Save file data to the incident model
+                console.log('Updating incident with file data...');
+                await Incident.update(incidentId, { files: filesData });
+            }
+
+            // Create the incident history
+            const newIncidentHistory = {
+                IncidentID: incidentId,
+                PreviousStatus: null,
+                NewStatus: 'Open',
+                PreviousAssigneeID: null,
+                NewAssigneeID: null,
+                Comment: 'Incident created',
+                UserID: req.userId,
+            };
+
+            console.log('Creating incident history record:', newIncidentHistory);
+            await IncidentHistory.create(newIncidentHistory);
+
+            res.status(201).json({ message: 'Incident created successfully', No: uniqueNo, files: filesData });
+        } catch (err) {
+            console.error('Error creating incident:', err);
+            res.status(500).json({ message: 'Error creating incident', error: err.message });
+        }
+    }
+];
+
+// Function to generate unique incident number
+function generateUniqueNo() {
+    const timestamp = Date.now();
+    const uniqueNo = `INC-${timestamp}`;
+    console.log('Generated unique incident number:', uniqueNo);
+    return uniqueNo;
+}
+
 
 exports.getIncidents = (req, res) => {
     Incident.findAll((err, results) => {

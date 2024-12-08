@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 exports.register = (req, res) => {
-    const { name, email, password, role, empid } = req.body;
+    const { name, email, password, role, empid, reportingTo, department  } = req.body;
      
     console.log(req.body);
 
@@ -16,7 +16,9 @@ exports.register = (req, res) => {
         password,
         role,
         name,
-        empid
+        empid,
+        reportingTo,
+        department
     };
 
     User.create(newUser, (err, result) => {
