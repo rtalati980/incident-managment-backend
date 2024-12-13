@@ -34,10 +34,10 @@ const Incident = {
         db.query(query, [No], callback);
     },
     findByUserId: (userId, callback) => {
-        const query = 'SELECT * FROM incidents WHERE JSON_CONTAINS(assignedUsers, ?)';
-        const userIdJson = JSON.stringify([userId]); // Convert userId to a JSON array
-        db.query(query, [userIdJson], callback);
-    },
+        const query = 'SELECT * FROM incidents WHERE assignedUsers LIKE ?';
+        const searchPattern = `%"${userId}"%`; // Assume userId is surrounded by quotes in JSON
+        db.query(query, [searchPattern], callback);
+    },    
 };
 
 module.exports = {
