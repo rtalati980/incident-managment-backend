@@ -35,7 +35,8 @@ const Incident = {
     },
     findByUserId: (userId, callback) => {
         const query = 'SELECT * FROM incidents WHERE JSON_CONTAINS(assignedUsers, ?)';
-        db.query(query, [userId], callback);
+        const userIdJson = JSON.stringify([userId]); // Convert userId to a JSON array
+        db.query(query, [userIdJson], callback);
     },
 };
 
