@@ -20,12 +20,24 @@ const app = express();
 app.use(bodyParser.json());
 
 // Enable CORS with specific options
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://incident-frontend.netlify.app'
+];
+
 app.use(cors({
-    origin: 'http://localhost:3000', // Remove the trailing slash
-    methods: ['GET', 'POST' ,'PUT','DELETE'],         // Allow only specified HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow only specified headers
-    credentials: true                 // Allow credentials (cookies, authorization headers)
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
+
 
 // Routes
 app.use('/api/auth', authRoutes);
