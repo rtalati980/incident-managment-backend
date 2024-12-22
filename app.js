@@ -2,6 +2,23 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const db = require('./config/db'); // Updated to use the pg client
+const getSideChannelList = require('side-channel-list');
+
+const channel = getSideChannelList();
+
+const key = {};
+console.assert(channel.has(key) === false);
+console.assert(() => channel.assert(key), TypeError);
+
+channel.set(key, 42);
+
+channel.assert(key); // does not throw
+console.assert(channel.has(key) === true);
+console.assert(channel.get(key) === 42);
+
+channel.delete(key);
+console.assert(channel.has(key) === false);
+console.assert(() => channel.assert(key), TypeError);
 
 // Import your route handlers
 const authRoutes = require('./routes/authRoutes');
