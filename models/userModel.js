@@ -6,9 +6,12 @@ const User = {
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(user.password, salt);
         user.password = hash;
-        const { email, password, role, name, empid } = user;
-        const query = 'INSERT INTO users (email, password, role, name, empid, reportingTo, department ) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        db.query(query, [email, password, role, name, empid], callback);
+
+       
+        const { email, password, role, name, empid, reportingTo = null, department = null } = user;
+
+        const query = 'INSERT INTO users (email, password, role, name, empid, `reportingTo`, `department`) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        db.query(query, [email, password, role, name, empid, reportingTo, department], callback);
     },
     findByEmail: (email, callback) => {
         const query = 'SELECT * FROM users WHERE email = ?';
