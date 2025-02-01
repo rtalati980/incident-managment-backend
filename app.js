@@ -10,6 +10,7 @@ const subcategoryRouter = require('./routes/subcategoryRoutes');
 const statusRouter = require('./routes/statusRoutes');
 const repeatedRouter = require('./routes/repeatedRoutes');
 const behaviourRouter = require('./routes/behaviourRoutes');
+const bayTypeRouter = require('./routes/lctnbaysRoutes');
 
 const cors = require('cors');
 const db = require('./config/db'); 
@@ -48,6 +49,7 @@ app.use('/api', subcategoryRouter);
 app.use('/api', statusRouter);
 app.use('/api', repeatedRouter);
 app.use('/api' ,behaviourRouter);
+app.use('/api',bayTypeRouter);
 app.use('/api', require('./routes/incidentHistoryRoutes'));
 // Connect to the database
 db.connect((err) => {

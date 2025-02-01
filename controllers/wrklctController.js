@@ -70,7 +70,17 @@ const wrklctnController = {
             }
             res.status(200).json(results[0]);
         });
-    }
+    },
+
+    getByBayType: (req, res) => {
+        const { bayTypeId } = req.params;
+        Wrklctn.getByBayType(bayTypeId, (err, result) => {
+          if (err) return res.status(500).json({ error: err.message });
+          return res.status(200).json(result);
+        });
+      }
+    
 };
+
 
 module.exports = wrklctnController;

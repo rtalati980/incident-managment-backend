@@ -34,9 +34,9 @@ const Incident = {
         db.query(query, [No], callback);
     },
     findByUserId: (userId, callback) => {
-        const query = 'SELECT * FROM incidents WHERE assignedUsers LIKE ?';
-        const searchPattern = `%"${userId}"%`; // Assume userId is surrounded by quotes in JSON
-        db.query(query, [searchPattern], callback);
+        const query = 'SELECT * FROM incidents WHERE assignedUsers = ?';
+       // Assume userId is surrounded by quotes in JSON
+        db.query(query, [userId], callback);
     },    
 };
 

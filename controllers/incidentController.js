@@ -57,13 +57,11 @@ exports.createIncident = [
 
         // Process assignedUsers if provided
    // Process assignedUsers if provided
-if (req.body.assignedUsers) {
+if (req.body.assignments) {
     try {
-        console.log('Raw assignedUsers:', req.body.assignedUsers);
+        console.log('Raw assignedUsers:', req.body.assignments);
         // Split comma-separated values into an array and map them to numbers
-        newIncident.assignedUsers = JSON.stringify(
-            req.body.assignedUsers.split(',').map(Number)
-        );
+        newIncident.assignedUsers = req.body.assignments.join(',');
         console.log('Processed assignedUsers:', newIncident.assignedUsers);
     } catch (error) {
         console.error('Error processing assignedUsers:', error);
@@ -204,6 +202,7 @@ exports.getIncedentByNo = (req, res) => {
 };
 
 exports.getIncdentAssignedUser= (req,res)=>{
+    console.log('from that user',req.headers['authorization']);
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
         return res.status(401).json({ message: 'Authorization header is missing' });
@@ -222,6 +221,7 @@ exports.getIncdentAssignedUser= (req,res)=>{
     }
 
     const userId = decodedToken.id;
+    console.log("from users id", userId);
     if (!userId) {
         return res.status(400).json({ message: 'User ID is missing in token' });
     }

@@ -1,14 +1,14 @@
 const db = require('../config/db');
 
 const Wrklctn = {
-  create: (name, bayType, userID, callback) => {
-    const query = 'INSERT INTO wrklctn (name, bayType, UserID) VALUES (?, ?, ?)';
-    db.query(query, [name, bayType, userID], callback);
+  create: (name, bayTypeId, userID, callback) => {
+    const query = 'INSERT INTO wrklctn (name, bayTypeId, UserID) VALUES (?, ?, ?)';
+    db.query(query, [name, bayTypeId, userID], callback);
   },
 
-  update: (id, name, bayType, userID, callback) => {
-    const query = 'UPDATE wrklctn SET name = ?, bayType = ?, UserID = ? WHERE id = ?';
-    db.query(query, [name, bayType, userID, id], callback);
+  update: (id, name, bayTypeId, userID, callback) => {
+    const query = 'UPDATE wrklctn SET name = ?, bayTypeId = ?, UserID = ? WHERE id = ?';
+    db.query(query, [name, bayTypeId, userID, id], callback);
   },
 
   delete: (id, callback) => {
@@ -26,9 +26,14 @@ const Wrklctn = {
     db.query(query, [id], callback);
   },
 
-  getByName:(name,callback)=> {
+  getByName: (name, callback) => {
     const query = 'SELECT * FROM wrklctn WHERE name = ?';
     db.query(query, [name], callback);
+  },
+
+  getByBayType: (bayTypeId, callback) => {
+    const query = 'SELECT * FROM wrklctn WHERE bayTypeId = ?';
+    db.query(query, [bayTypeId], callback);
   }
 };
 
