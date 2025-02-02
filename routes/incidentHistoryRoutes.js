@@ -15,6 +15,6 @@ router.put('/incident-history/:historyId', incidentHistoryController.updateIncid
 // Delete an incident history record
 router.delete('/incident-history/:historyId', incidentHistoryController.deleteIncidentHistory);
 
-router.get('/incident-history/:incidentId', incidentHistoryController.getIncidentHistoryByIncidentId);
+router.get('/incident-history/incident/:incidentId', incidentHistoryController.getIncidentHistoryByIncidentId);
 
 module.exports = router;
