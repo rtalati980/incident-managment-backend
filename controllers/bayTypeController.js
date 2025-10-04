@@ -2,8 +2,8 @@ const BayType = require('../models/bayTypeModel');
 
 const BayTypeController = {
   create: (req, res) => {
-    const { name } = req.body;
-    BayType.create(name, (err, result) => {
+    const { name,wrklctn_id } = req.body;
+    BayType.create(name,wrklctn_id,  (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
       return res.status(201).json({ message: 'BayType created successfully', result });
     });

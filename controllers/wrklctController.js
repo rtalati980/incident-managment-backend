@@ -2,21 +2,21 @@ const Wrklctn = require('../models/wrklctnModel');
 
 const wrklctnController = {
     create: (req, res) => {
-        const { name, bayType, UserID } = req.body;
+        const { name, UserID } = req.body;
         console.log(req.body);
-        Wrklctn.create(name, bayType, UserID, (err, results) => {
+        Wrklctn.create(name, bayType, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            res.status(201).json({ id: results.insertId, name, bayType, UserID });
+            res.status(201).json({ id: results.insertId, name, UserID });
         });
     },
 
     update: (req, res) => {
         const { id } = req.params;
-        const { name, bayType, UserID } = req.body;
+        const { name, UserID } = req.body;
         
-        Wrklctn.update(id, name, bayType, UserID, (err, results) => {
+        Wrklctn.update(id, name, UserID, (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
@@ -71,14 +71,6 @@ const wrklctnController = {
             res.status(200).json(results[0]);
         });
     },
-
-    getByBayType: (req, res) => {
-        const { bayTypeId } = req.params;
-        Wrklctn.getByBayType(bayTypeId, (err, result) => {
-          if (err) return res.status(500).json({ error: err.message });
-          return res.status(200).json(result);
-        });
-      }
     
 };
 
