@@ -9,14 +9,17 @@ const Incident = {
             callback(null, result.insertId);
         });
     },
-    findAll: (callback) => {
-        const query = 'SELECT * FROM incidents';
-        db.query(query, callback);
+   findAll: (limit, offset, callback) => {
+        const query = `SELECT * FROM incidents ORDER BY repoDate DESC LIMIT ? OFFSET ?`;
+        db.query(query, [limit, offset], callback);
     },
-    findById: (id, callback) => {
-        const query = 'SELECT * FROM incidents WHERE id = ?';
-        db.query(query, [id], callback);
+
+    // Get total count of incidents
+    findById: (id, limit, offset, callback) => {
+        const query = `SELECT * FROM incidents WHERE id = ? ORDER BY repoDate DESC LIMIT ? OFFSET ?`;
+        db.query(query, [id, limit, offset], callback);
     },
+    
     update: (id, incident, callback) => {
         const query = 'UPDATE incidents SET ? WHERE id = ?';
         db.query(query, [incident, id], callback);
