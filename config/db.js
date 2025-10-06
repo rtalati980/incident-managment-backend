@@ -2,11 +2,11 @@ const mysql = require('mysql2');
 require('dotenv').config({ path: './config/pass.env' });
 
 const db = mysql.createConnection({
-    host: 'mysql-3dc19a78-ronakjain980-ca3b.l.aivencloud.com',
-    user: 'avnadmin',
+    host: 'k7yzrf.h.filess.io',
+    user: 'incidentmanagement12_fightlost',
     password:  process.env.AIVEN_SERVICE_PASSWORD,
-    database: 'defaultdb',
-    port: '13407'
+    database: 'incidentmanagement12_fightlost',
+    port: '61032'
 });
 
 db.connect((err) => {

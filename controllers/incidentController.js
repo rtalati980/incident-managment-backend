@@ -128,14 +128,20 @@ function generateUniqueNo() {
 
 
 exports.getIncidents = (req, res) => {
-    Incident.findAll((err, results) => {
+    const page = parseInt(req.query.page) || 1; // default page = 1
+    const limit = 10; // fetch only 10 records at a time
+    const offset = (page - 1) * limit;
+    Incident.findAll(limit,offset,(err, results) => {
         if (err) return res.status(500).send(err);
         res.status(200).send(results);
     });
 };
 
 exports.getIncident = (req, res) => {
-    Incident.findById(req.params.id, (err, results) => {
+    const page = parseInt(req.query.page) || 1; // default page = 1
+    const limit = 10; // fetch only 10 records at a time
+    const offset = (page - 1) * limit;
+    Incident.findById(limit,offset,req.params.id, (err, results) => {
         if (err) return res.status(500).send(err);
         console.log(req);
         if (results.length === 0) return res.status(404).send({ message: 'Incident not found' });
